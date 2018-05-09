@@ -14,15 +14,15 @@ namespace GBCE
 
     public class Trade
     {
-        public Stock TradedStock { get; set; }
+        public string StockSymbol { get; set; }
         public DateTime? TradeDate { get; set; }
         public decimal Quantity { get; set; }
         public TradeType TypeOfTrade { get; set; }
         public decimal Price { get; set; }
 
-        public Trade(Stock stock, DateTime? tradeDate, decimal quantity, TradeType tradeType, decimal price )
+        public Trade(string stockSymbol, DateTime? tradeDate, decimal quantity, TradeType tradeType, decimal price )
         {
-            TradedStock = stock;
+            StockSymbol = stockSymbol;
             TradeDate = tradeDate;
             Quantity = quantity;
             TypeOfTrade = tradeType;
@@ -34,9 +34,9 @@ namespace GBCE
         {
             try
             {
-                if (TradedStock == null)
+                if (String.IsNullOrWhiteSpace(StockSymbol))
                 {
-                    throw new Exception("TradedStock has not been set");
+                    throw new Exception("StockSymbol has not been set");
                 }
                 if (TradeDate == null)
                 {

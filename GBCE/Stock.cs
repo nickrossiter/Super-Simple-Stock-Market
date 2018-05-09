@@ -17,52 +17,48 @@ namespace GBCE
         public string StockSymbol { get; set; }
         public GBCEStockType StockType { get; set; }
         public decimal LastDividend { get; set; }
-        public decimal FixedDividend { get; set; }
+        public decimal? FixedDividend { get; set; }
         public decimal ParValue { get; set; }
+
+        public const string LastDividendIsZero = "Last Dividend is zero";
+        public const string FixedDividendHasNoValue = "Fixed Dividend has no value";
 
         public decimal CalculateDividendYieldForPrice(decimal price)
         {
-            try
+            var dividendYield = 0m;
+            if (StockType == GBCEStockType.Common)
             {
-                var dividendYield = 0m;
-                if (StockType == GBCEStockType.Common)
+                if (LastDividend == 0)
                 {
-                    dividendYield = LastDividend / price;
+                    throw new ArgumentOutOfRangeException("LastDividend", LastDividend, LastDividendIsZero);
                 }
-                if (StockType == GBCEStockType.Preferred)
+                dividendYield = LastDividend / price;
+            }
+            if (StockType == GBCEStockType.Preferred)
+            {
+                if (FixedDividend.HasValue)
                 {
-                    dividendYield = FixedDividend / 100 * ParValue / price;
+                    dividendYield = FixedDividend.Value / 100 * ParValue / price;
                 }
-                return dividendYield;
+                else
+                {
+                    throw new ArgumentOutOfRangeException("FixedDividend", FixedDividend, FixedDividendHasNoValue);
+                }
+            }
+            return dividendYield;
 
-            }
-            catch (DivideByZeroException)
-            {
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Exception in Stock.CalculateDividendYieldForPrice", ex);
-            }
         }
 
         public decimal CalculatePERatioForPrice(decimal price)
         {
-            try
+            if (LastDividend == 0)
             {
-                var peRatio = price / LastDividend;
+                throw new ArgumentOutOfRangeException("LastDividend", LastDividend, LastDividendIsZero);
+            }
+            var peRatio = price / LastDividend;
 
-                return peRatio;
+            return peRatio;
 
-            }
-            catch (DivideByZeroException)
-            {
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Exception in Stock.CalculatePERatioForPrice", ex);
-            }
         }
     }
 }
