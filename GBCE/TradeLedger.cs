@@ -8,13 +8,37 @@ namespace GBCE
 {
     public class TradeLedger
     {
+        public const string StockSymbolHasNotBeenProvided = "StockSymbol has not been provided";
+        public const string StockDoesNotExistInStockList = "Stock does not exist in StockList";
+
         public List<Trade> Trades { get; set; }
 
-        public void Buy(string stockSymbol, decimal quantity, decimal price)
+        public StockCollection Stocks { get; set; }
+
+        public TradeLedger(StockCollection stockCollection)
+        {
+            Trades = new List<Trade>();
+            Stocks = stockCollection;
+        }
+
+        /// <summary>
+        /// Creates a Buy trade in the Trades list using the supplied stockSymbol
+        /// An exception will be thrown if a stock with the supplied stockSymbol does not exist in the Stocks StockCollection
+        /// </summary>
+        /// <param name="stockSymbol"></param>
+        /// <param name="tradeDate"></param>
+        /// <param name="quantity"></param>
+        /// <param name="price"></param>
+        public void Buy(string stockSymbol, DateTime tradeDate, decimal quantity, decimal price)
         {
             try
             {
-                var trade = new Trade(stockSymbol, DateTime.Now, quantity, TradeType.Buy, price);
+                if (!Stocks.StockExists(stockSymbol))
+                {
+                    throw new Exception(StockDoesNotExistInStockList);
+                }
+
+                var trade = new Trade(stockSymbol, tradeDate, quantity, TradeType.Buy, price);
                 Trades.Add(trade);
             }
             catch (Exception ex)
@@ -23,11 +47,24 @@ namespace GBCE
             }
         }
 
-        public void Sell(string stockSymbol, decimal quantity, decimal price)
+        /// <summary>
+        /// Creates a Sell trade in the Trades list using the supplied stockSymbol
+        /// An exception will be thrown if a stock with the supplied stockSymbol does not exist in the Stocks StockCollection        
+        /// </summary>
+        /// <param name="stockSymbol"></param>
+        /// <param name="tradeDate"></param>
+        /// <param name="quantity"></param>
+        /// <param name="price"></param>
+        public void Sell(string stockSymbol, DateTime tradeDate, decimal quantity, decimal price)
         {
             try
             {
-                var trade = new Trade(stockSymbol, DateTime.Now, quantity, TradeType.Sell, price);
+                if (!Stocks.StockExists(stockSymbol))
+                {
+                    throw new Exception(StockDoesNotExistInStockList);
+                }
+
+                var trade = new Trade(stockSymbol, tradeDate, quantity, TradeType.Sell, price);
                 Trades.Add(trade);
             }
             catch (Exception ex)
@@ -36,13 +73,25 @@ namespace GBCE
             }
         }
 
+        /// <summary>
+        /// Gets the Volume Weighted Stock Price for stocks with the supplied stockSymbol that have a trade date within the last five minutes
+        /// Throws an exception if the supplied stockSymbol is blank
+        /// Throws an exception if there is not a stock in the Stocks StockCollection which matches the supplied stockSymbol
+        /// </summary>
+        /// <param name="stockSymbol"></param>
+        /// <returns></returns>
         public decimal GetVolumeWeightedStockPrice(string stockSymbol)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(stockSymbol))
                 {
-                    throw new Exception("StockSymbol has not been provided");
+                    throw new Exception(StockSymbolHasNotBeenProvided);
+                }
+
+                if (!Stocks.StockExists(stockSymbol))
+                {
+                    throw new Exception(StockDoesNotExistInStockList);
                 }
 
                 var tradeRange = Trades.Where(t => t.StockSymbol == stockSymbol && t.TradeDate >= DateTime.Now.AddMinutes(-5));
@@ -74,7 +123,7 @@ namespace GBCE
 
             catch(Exception ex)
             {
-                throw new Exception("Exception in TradeLedger.GetVolumeWeightedStockPrice");
+                throw new Exception("Exception in TradeLedger.GetVolumeWeightedStockPrice",ex);
             }
         }
     }

@@ -23,6 +23,13 @@ namespace GBCE
         public const string LastDividendIsZero = "Last Dividend is zero";
         public const string FixedDividendHasNoValue = "Fixed Dividend has no value";
 
+        /// <summary>
+        /// Calculates the Dividend Yield of the stock for the supplied price
+        /// If the stock is of type Common and the LastDividend value is zero, an ArgumentOutOfRangeException exception is thrown.
+        /// If the stock is of type Preferred and the FixedDividend does not have a value, an ArgumentOutOfRangeException exception is thrown
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns>the Dividen Yield as a decimal type</returns>
         public decimal CalculateDividendYieldForPrice(decimal price)
         {
             var dividendYield = 0m;
@@ -49,6 +56,12 @@ namespace GBCE
 
         }
 
+        /// <summary>
+        /// Calculates the P/E ratio of a stock for a given price using the LastDividend amount for both Common and Preferred stock type (is this correct?)
+        /// Throws an ArgumentOutOfRangeException if the LastDividend amount is zero 
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
         public decimal CalculatePERatioForPrice(decimal price)
         {
             if (LastDividend == 0)

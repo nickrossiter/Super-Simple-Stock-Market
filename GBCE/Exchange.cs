@@ -8,31 +8,41 @@ namespace GBCE
 {
     public class Exchange
     {
-        public StockCollection StockList { get; set; }
+        public StockCollection Stocks { get; set; }
 
         public TradeLedger Trades { get; set; }
 
+        public Exchange()
+        {
+            Stocks = new StockCollection();
+            Trades = new TradeLedger(Stocks);
+        }
+
+        /// <summary>
+        /// Calculates the All Share Index for all the stocks in the Exchange
+        /// using the geometric mean of the Volume Weighted Stock Price of each stock
+        /// </summary>
+        /// <returns></returns>
         public double CalculateAllShareIndex()
         {
             try
             {
-                var powerCount = 0;
-                var priceProduct = 1m;
                 var shareIndex = 0d;
 
-                foreach (var stock in StockList.Stocks)
+                var values = new List<double>();
+
+                foreach (var stock in Stocks.Stocks)
                 {
                     var volumeWeightedStockPrice = Trades.GetVolumeWeightedStockPrice(stock.Value.StockSymbol);
                     if (volumeWeightedStockPrice != 0)
                     {
-                        powerCount++;
-                        priceProduct *= volumeWeightedStockPrice;
+                        values.Add(Convert.ToDouble(volumeWeightedStockPrice));
                     }
                 }
-                if (powerCount > 0)
-                {
-                    shareIndex = Math.Pow(Convert.ToDouble(priceProduct), Convert.ToDouble(1 / powerCount));
-                }
+
+                shareIndex = Helper.GetGeometricMeanUsingLog(values);
+
+
                 return shareIndex;
             }
             catch (Exception ex)
@@ -41,5 +51,6 @@ namespace GBCE
             }
         }
 
+       
     }
 }

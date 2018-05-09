@@ -75,7 +75,9 @@ namespace GBCE.Tests
             {
                 // Assert
                 StringAssert.Contains(ex.Message, Stock.LastDividendIsZero);
+                return;
             }
+            Assert.Fail("Expected exception was not thrown");
         }
 
         [TestMethod()]
@@ -100,7 +102,9 @@ namespace GBCE.Tests
             {
                 // Assert
                 StringAssert.Contains(ex.Message, Stock.FixedDividendHasNoValue);
+                return;
             }
+            Assert.Fail("Expected exception was not thrown");
         }
 
         [TestMethod()]
@@ -146,7 +150,9 @@ namespace GBCE.Tests
             {
                 // Assert
                 StringAssert.Contains(ex.Message, Stock.LastDividendIsZero);
+                return;
             }
+            Assert.Fail("Expected exception was not thrown");
         }
     }
 }

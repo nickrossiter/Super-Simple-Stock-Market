@@ -14,6 +14,12 @@ namespace GBCE
 
     public class Trade
     {
+        public const string StockSymbolHasNotBeenSet = "StockSymbol has not been set";
+        public const string TradeDateHasNotBeenSet = "TradeDate has not been set";
+        public const string TradeQuantityCannotBeZero = "Trade Quantity cannot be zero";
+        public const string TradePriceCannotBeNegative = "Trade Price cannot be negative";
+        public const string TradePriceCannotBeZero = "Trade Price cannot be zero";
+
         public string StockSymbol { get; set; }
         public DateTime? TradeDate { get; set; }
         public decimal Quantity { get; set; }
@@ -36,23 +42,23 @@ namespace GBCE
             {
                 if (String.IsNullOrWhiteSpace(StockSymbol))
                 {
-                    throw new Exception("StockSymbol has not been set");
+                    throw new Exception(StockSymbolHasNotBeenSet);
                 }
                 if (TradeDate == null)
                 {
-                    throw new Exception("TradeDate has not been set");
+                    throw new Exception(TradeDateHasNotBeenSet);
                 }
                 if (Quantity == 0)
                 {
-                    throw new Exception("Trade Quantity cannot be zero");
+                    throw new Exception(TradeQuantityCannotBeZero);
                 }
                 if (Price < 0)
                 {
-                    throw new Exception("Trade Price cannot be negative");
+                    throw new Exception(TradePriceCannotBeNegative);
                 }
                 if (Price == 0)
                 {
-                    throw new Exception("Price cannot be zero");
+                    throw new Exception(TradePriceCannotBeZero);
                 }
             }
             catch (Exception ex)
